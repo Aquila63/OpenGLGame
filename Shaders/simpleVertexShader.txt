@@ -1,0 +1,24 @@
+#version 330
+
+layout (location = 0) in vec3 vertex_position;
+layout (location = 1) in vec3 vertex_normals;
+layout (location = 2) in vec2 vertex_texture;
+
+uniform mat4 view;
+uniform mat4 proj;
+uniform mat4 model;
+
+out vec3 normal_eye, position_eye;
+out mat4 view_mat;
+out vec2 frag_tex;
+out vec3 cube_tex;
+out float fog_coord;
+
+void main(){
+	cube_tex = vertex_position;
+	normal_eye = (view * vec4 (vertex_normals, 0.0)).xyz;
+	position_eye = vec3(view * model * vec4(vertex_normals, 1.0));
+	gl_Position =  proj * view * model * vec4 (vertex_position, 1.0);
+	frag_tex = vertex_texture;
+	fog_coord = gl_Position.z;
+}
