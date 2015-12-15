@@ -23,7 +23,7 @@ const float fog_density = 0.0017;
 
 out vec4 frag_colour;
 
-float apply_fog(vec4 color)
+float apply_fog()
 {
 	//float z = gl_FragCoord.z / gl_FragCoord.w;
 	//float fog = clamp(exp(-fog_density * z * z), 0.2, 1);
@@ -60,7 +60,7 @@ void main(){
 	//frag_colour = vec4 (Ia + Id + Is, 1.0);
 	vec4 color = vec4(Ia + Id + Is, 1.0);
 	color *= texture(my_tex, frag_tex);
-	float fog = apply_fog(color);
+	float fog = apply_fog();
 	frag_colour = mix(color, fog_color, fog);
 	//frag_colour = color;
 }

@@ -31,8 +31,6 @@
 #define TREE_MESH "../Meshes/lowpolytree_big.obj"
 #define MEDKIT_MESH "../Meshes/FirstAidMedKit2.obj"
 
-
-
 /*----------------------------------------------------------------------------
 					TEXTURE FILES
 ------------------------------------------------------------------------------*/
@@ -71,7 +69,7 @@
 ------------------------------------------------------------------------------*/
 
 #define TEXT_FONT "../freemono.png"
-#define TEXT_META "../freemomo.meta"
+#define TEXT_META "../freemono.meta"
 
 /*----------------------------------------------------------------------------
 					SOUNDS
@@ -980,15 +978,16 @@ public:
 
 	void gameOver()
 	{
-		this->gameOverTxt = add_text("GAME OVER", -0.0f, 0.5f, 36.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+		this->gameOverTxt = add_text("GAME OVER", -0.2f, 0.5f, 36.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	void checkWin()
 	{
 		vec3 pos = getPosition();
-		if (-235 >= pos.v[0] >= 235 || -235 >= pos.v[2] >= 235)
+		if (pos.v[0] >= 235 || pos.v[2] >= 235 || 
+			pos.v[0] <= -235 || pos.v[2] <= -235  )
 		{
-			this->gameWinTxt = add_text("YOU HAVE ESCAPED!", -0.0f, 0.5f, 36.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+			this->gameWinTxt = add_text("YOU HAVE ESCAPED!", -0.2f, 0.5f, 36.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 		}
 	}
 
@@ -1005,6 +1004,7 @@ public:
 		else
 		{
 			health -= HEALTH_DRAIN_RATE;
+			if (health < 0) { health = 0; } 
 			if (health == 0)
 			{
 				hudUpdate();
@@ -1021,6 +1021,10 @@ public:
 	{
 		PlaySound(MEDKIT_SOUND, NULL, SND_ASYNC | SND_FILENAME);
 		health += HEALTH_GAIN_RATE;
+		if (health > MAX_HEALTH)
+		{
+			health = MAX_HEALTH;
+		}
 		hudUpdate();
 	}
 
@@ -1386,7 +1390,7 @@ void display()
 	medkits.draw();
 	player.drawHUD();
 
-	//drawSkybox(view, persp_proj);
+	drawSkybox(view, persp_proj);
 
     glutSwapBuffers();
 }
@@ -1456,6 +1460,10 @@ void keypress(unsigned char key, int x, int y)
 	if (key == 'p')
 	{
 		player.printPos();
+	}
+	if (key == '#')
+	{
+		player.setGodMode();
 	}
 }
 
