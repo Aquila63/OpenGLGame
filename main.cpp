@@ -7,10 +7,7 @@
 #include <iostream>
 #include "maths_funcs.h"
 
-#include "ImageLoader.h"
-
 // Assimp includes
-
 #include <assimp/cimport.h> // C importer
 #include <assimp/scene.h> // collects data
 #include <assimp/postprocess.h> // various extra operations
@@ -22,6 +19,7 @@
 #include <random>
 #include "Camera.h"
 #include "text.h"
+#include "ImageLoader.h"
 
 /*----------------------------------------------------------------------------
 						MESHES
@@ -84,12 +82,6 @@
 /*----------------------------------------------------------------------------
 ----------------------------------------------------------------------------*/
 
-std::vector<float> g_vp, g_vn, g_vt;
-std::vector<float> mat;
-
-int g_point_count = 0;
-
-
 // Macro for indexing vertex buffer
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -98,34 +90,10 @@ GLuint shaderProgramID;
 GLuint skyboxShaderID;
 GLuint fogShaderID;
 
-GLuint ground_tex;
-GLuint table_tex;
-
-unsigned int mesh_vao = 0;
 int width = 1280;
 int height = 720;
 
-//Middle of screen
-int midWidth = width / 2;
-int midHeight = height / 2;
-
-float orientY, orientX;
-
-GLuint loc1, loc2, loc3;
-GLfloat rotate_y = 0.0f;
-
-float camX = 5.0;
-float camY = 5.0;
-float camZ = 8.0;
-
 float  delta;
-
-int fogEquation = 1;
-//vec4 fogColor = { 0.5f, 0.5f, 0.5f, 1.0f };
-float fogDensity = 0.10;
-
-vec3 lightPostion(30, -10, 50);
-vec3 eyePosition(0, 10, 85);
 
 ImageLoader il;
 
@@ -140,6 +108,8 @@ enum ObjectType {
  *-------------------------------------------------
  */
 
+
+//TODO Get rid of this class without breaking everything
 class BoundingBox
 {
 public:
