@@ -36,7 +36,8 @@ float apply_fog()
 	return fog;
 }
 
-void main(){
+void main()
+{
 
 	//ambient intensity 	
 	vec3 Ia = La * Ka;

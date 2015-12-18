@@ -1,32 +1,32 @@
-﻿Build started 15/12/2015 11:21:13.
+﻿Build started 18/12/2015 01:31:09.
      1>Project "C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Game\Project\Project.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (Lab2.vcxproj).  This can lead to incorrect clean and rebuild behavior.
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Assignments&Labs\Lab5\assimp\include" /I"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Assignments&Labs\Lab3\glew-1.13.0\include" /I"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Assignments&Labs\Lab3\freeglut\include" /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt ..\main.cpp
          main.cpp
-     1>c:\users\ciaran\documents\tcd documents\ss\graphics\game\Camera.h(171): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-     1>..\main.cpp(122): warning C4305: 'initializing': truncation from 'double' to 'float'
-     1>..\main.cpp(193): warning C4018: '<': signed/unsigned mismatch
+     1>c:\users\ciaran\documents\tcd documents\ss\graphics\game\Camera.h(144): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+     1>..\main.cpp(125): warning C4305: 'initializing': truncation from 'double' to 'float'
+     1>..\main.cpp(196): warning C4018: '<': signed/unsigned mismatch
      1>..\main.cpp(780): warning C4018: '<': signed/unsigned mismatch
-     1>..\main.cpp(1139): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-     1>..\main.cpp(1140): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+     1>..\main.cpp(1146): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
      1>..\main.cpp(1147): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-     1>..\main.cpp(1148): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-     1>..\main.cpp(1203): warning C4018: '<': signed/unsigned mismatch
-     1>..\main.cpp(1364): warning C4305: 'argument': truncation from 'double' to 'float'
+     1>..\main.cpp(1154): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+     1>..\main.cpp(1155): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+     1>..\main.cpp(1210): warning C4018: '<': signed/unsigned mismatch
+     1>..\main.cpp(1371): warning C4305: 'argument': truncation from 'double' to 'float'
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Game\Release\Project.exe" /NOLOGO /LIBPATH:"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Assignments&Labs\Lab5\assimp\lib\Release" /LIBPATH:"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Assignments&Labs\Lab3\freeglut\lib" /LIBPATH:"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Assignments&Labs\Lab3\glew-1.13.0\lib\Release\Win32" freeglut.lib glew32.lib assimp.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Game\Release\Project.pdb" /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Game\Release\Project.lib" /MACHINE:X86 /SAFESEH Release\ImageLoader.obj
          Release\main.obj
          Release\maths_funcs.obj
          Release\text.obj
          Generating code
-         4 of 594 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
+         0 of 594 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
            0 functions were new in current compilation
-           1 functions had inline decision re-evaluated but remain unchanged
+           0 functions had inline decision re-evaluated but remain unchanged
          Finished generating code
          Project.vcxproj -> C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Game\Release\Project.exe
      1>Done Building Project "C:\Users\Ciaran\Documents\TCD Documents\SS\Graphics\Game\Project\Project.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.82
+Time Elapsed 00:00:02.29

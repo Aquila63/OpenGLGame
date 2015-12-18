@@ -3,14 +3,12 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-// GL Includes
 #include <GL/glew.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
 #include "maths_funcs.h"
 
 
-// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
+//Enum that helps identify which button was pressed on the keyboard
+//And thus, where to go
 enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
@@ -18,46 +16,34 @@ enum Camera_Movement {
 	RIGHT
 };
 
-// Default camera values
-const GLfloat YAW = -90.0f;
-const GLfloat PITCH = 0.0f;
-const GLfloat SPEED = 3.0f;
-const GLfloat SENSITIVTY = 0.25f;
-const GLfloat ZOOM = 45.0f;
+#define	YAW				-90.0f
+#define PITCH			0.0f
+#define SPEED			3.0f
+#define SENSITIVTY		0.25f
+#define ZOOM			45.0f
 
-
-// An abstract camera class that processes input and calculates the corresponding Eular Angles, Vectors and Matrices for use in OpenGL
 class Camera
 {
 public:
-	// Camera Attributes
+	//Basic Camera Vars
 	vec3 Position;
 	vec3 Front;
 	vec3 Up;
 	vec3 Right;
 	vec3 WorldUp;
-	// Eular Angles
+	//Eular Angles
 	GLfloat Yaw;
 	GLfloat Pitch;
-	// Camera options
+	//Camera options
 	GLfloat MovementSpeed;
 	GLfloat MouseSensitivity;
 	GLfloat Zoom;
 
-	// Constructor with vectors
+
 	Camera(vec3 position = vec3(0.0f, 0.0f, 0.0f), vec3 up = vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(vec3(0.0f, 0.0f, 0.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
 	{
 		this->Position = position;
 		this->WorldUp = up;
-		this->Yaw = yaw;
-		this->Pitch = pitch;
-		this->updateCameraVectors();
-	}
-	// Constructor with scalar values
-	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
-	{
-		this->Position = vec3(posX, posY, posZ);
-		this->WorldUp = vec3(upX, upY, upZ);
 		this->Yaw = yaw;
 		this->Pitch = pitch;
 		this->updateCameraVectors();
@@ -73,14 +59,13 @@ public:
 		return this->Position;
 	}
 
-	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	mat4 GetViewMatrix()
 	{
 		//std::cout << this->Position.v[0] << " " << this->Position.v[2] << std::endl;
 		return look_at(this->Position, this->Position + this->Front, this->Up);
 	}
 
-	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
+	//Process a keyboard key press (enum values come from when the user presses 'w' etc, thanks to Glut's handler)
 	void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
 	{
 		GLfloat velocity = this->MovementSpeed * deltaTime;
@@ -96,20 +81,9 @@ public:
 		this->Position.v[1] = 3.0; //Keep the y value at 3, prevents you from flying around/noclip
 	}
 
-	/*void ProcessKeyboard(Camera_Movement direction, vec3 position)
-	{
-		if (direction == FORWARD)
-			this->Position += position;
-		if (direction == BACKWARD)
-			this->Position -= position;
-		if (direction == LEFT)
-			this->Position -= position;
-		if (direction == RIGHT)
-			this->Position += position;
-
-		this->Position.v[1] = 3.0; //Keep the y value at 3, prevents you from flying around/noclip
-	}*/
-
+	/**
+		Function to calculate the next position that the camera will make - used for Collision Detection
+	*/
 	vec3 calculateNextPosition(Camera_Movement direction, GLfloat deltaTime)
 	{
 		vec3 position;
@@ -144,7 +118,6 @@ public:
 		//return position;
 	}
 
-	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true)
 	{
 		xoffset *= this->MouseSensitivity;
@@ -153,7 +126,7 @@ public:
 		this->Yaw += xoffset;
 		this->Pitch += yoffset;
 
-		// Make sure that when pitch is out of bounds, screen doesn't get flipped
+		//Limit look values
 		if (constrainPitch)
 		{
 			if (this->Pitch > 89.0f)
@@ -162,10 +135,10 @@ public:
 				this->Pitch = -89.0f;
 		}
 
-		// Update Front, Right and Up Vectors using the updated Eular angles
 		this->updateCameraVectors();
 	}
 
+	//Simple function to convert a given degrees value to radians
 	float radians(float input)	
 	{
 		return ONE_DEG_IN_RAD * input;
@@ -185,7 +158,8 @@ private:
 		front = vec3(x, y, z);
 		this->Front = normalise(front);
 		// Also re-calculate the Right and Up vector
-		this->Right = normalise(cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+		// Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+		this->Right = normalise(cross(this->Front, this->WorldUp));  
 		this->Up = normalise(cross(this->Right, this->Front));
 	}
 };

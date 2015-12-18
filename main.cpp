@@ -75,8 +75,11 @@
 					SOUNDS
 ------------------------------------------------------------------------------*/
 
-#define AMBIENT_SOUND "../Sounds/ambient2.wav"
-#define MEDKIT_SOUND "../Sounds/medkit.wav"
+//Credit for these sounds goes towards the excellent website freesound.org
+
+#define AMBIENT_SOUND "../Sounds/ambient2.wav" //Credit: IanStarGem
+#define MEDKIT_SOUND "../Sounds/medkit.wav" //Credit: Syna-Max
+#define PLAYER_DEATH_SOUND "../Sounds/player_death.wav" //Credit: manuts
 
 /*----------------------------------------------------------------------------
 ----------------------------------------------------------------------------*/
@@ -520,7 +523,6 @@ public:
 
 		//data = stbi_load(filename, &width, &height, &n, 0);
 		data = il.load_image(filename, &width, &height, &n, 0);
-
 		glGenTextures(1, &this->tex);
 		glBindTexture(GL_TEXTURE_2D, this->tex);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -582,7 +584,7 @@ public:
 			glBindTexture(GL_TEXTURE_2D, this->tex);
 			
 			glUniformMatrix4fv(model_location, 1, GL_FALSE, model.m);
-			glDrawArrays(GL_TRIANGLES, 0, point_count);
+			glDrawArrays(GL_TRIANGLES, 0, this->point_count);
 			glBindVertexArray(0);
 			bbox.setUp();
 			model = identity_mat4();
@@ -595,7 +597,7 @@ Trees trees;
 
 class Medkits
 {
-#define MEDKIT_AMOUNT 50;
+#define MEDKIT_AMOUNT 75;
 public:
 	std::vector<float> vp, vn, vt;
 	int point_count;
@@ -668,8 +670,6 @@ public:
 
 			bbox.findMaxMinValues(mesh);
 		}
-
-
 
 		printf("\n");
 		aiReleaseImport(scene);
@@ -795,7 +795,7 @@ public:
 			glBindTexture(GL_TEXTURE_2D, this->tex);
 
 			glUniformMatrix4fv(model_location, 1, GL_FALSE, model.m);
-			glDrawArrays(GL_TRIANGLES, 0, point_count);
+			glDrawArrays(GL_TRIANGLES, 0, this->point_count);
 			glBindVertexArray(0);
 			model = identity_mat4();
 		}
@@ -941,7 +941,7 @@ Skybox skybox;
 class Player
 {
 #define MAX_HEALTH			100
-#define HEALTH_DRAIN_RATE	10
+#define HEALTH_DRAIN_RATE	5
 #define HEALTH_GAIN_RATE	20
 #define COLLISION_COEFF		3
 
@@ -953,7 +953,7 @@ public:
 	//Last mouse position starts at the screen centre
 	GLfloat lastX = 640, lastY = 360;
 
-	//BUG - glut doesn't keep the cursor in the screen, so mouse movement is awkward when windowed
+	//BUG - glut doesn't keep the cursor inside the window, so mouse movement is awkward when windowed
 
 	int health; //Player health
 	bool godMode;
@@ -961,6 +961,8 @@ public:
 	int healthTxt;
 	int gameOverTxt;
 	int gameWinTxt;
+	int godModTxt;
+	bool deathSoundPlayed;
 
 	Player()
 	{
@@ -978,14 +980,20 @@ public:
 
 	void gameOver()
 	{
+		//Stops the death sound from repeating - pretty funny but strange when in-game
+		if (!deathSoundPlayed) 
+		{
+			PlaySound(PLAYER_DEATH_SOUND, NULL, SND_ASYNC | SND_FILENAME); 
+			deathSoundPlayed = true;
+		}
 		this->gameOverTxt = add_text("GAME OVER", -0.2f, 0.5f, 36.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	void checkWin()
 	{
 		vec3 pos = getPosition();
-		if (pos.v[0] >= 235 || pos.v[2] >= 235 || 
-			pos.v[0] <= -235 || pos.v[2] <= -235  )
+		if ((pos.v[0] >= 235 || pos.v[2] >= 235 || 
+			pos.v[0] <= -235 || pos.v[2] <= -235) && health > 0)
 		{
 			this->gameWinTxt = add_text("YOU HAVE ESCAPED!", -0.2f, 0.5f, 36.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 		}
@@ -998,6 +1006,9 @@ public:
 		update_text(this->healthTxt, txtOut);
 	}
 
+	/**
+		Decreases the player's health and checks for game failure.
+	*/
 	void decreaseHealth()
 	{
 		if (this->godMode) { return; }
@@ -1017,13 +1028,19 @@ public:
 		}
 	}
 
+	/**
+		Increases the player's health
+		BUG: When a medkit is picked up, there's an extra ~20-30 detected collisions, which results in the health 
+		shooting up to values like 400. As such, health is kept at MAXHEALTH, so there's no health regen - it just 
+		fills up again
+	*/
 	void increaseHealth()
 	{
 		PlaySound(MEDKIT_SOUND, NULL, SND_ASYNC | SND_FILENAME);
 		health += HEALTH_GAIN_RATE;
 		if (health > MAX_HEALTH)
 		{
-			health = MAX_HEALTH;
+			health = MAX_HEALTH; //Stops the health going crazy thanks to the multiple-medkit-collisions bug
 		}
 		hudUpdate();
 	}
@@ -1043,6 +1060,9 @@ public:
 		return cam.GetViewMatrix();
 	}
 
+	/**
+		Toggle for the "God Mode" cheat aka. the invincibility cheat 
+	*/
 	void setGodMode()
 	{
 		if (!this->godMode) { this->godMode = true; }
@@ -1050,11 +1070,10 @@ public:
 	}	
 
 	/**
-	* Containers facilitating player movement
+		 Containers facilitating player movement
 	*/
 	void moveForward()
 	{
-		//cam.ProcessKeyboard(FORWARD, delta * 4);
 		vec3 pos = cam.calculateNextPosition(FORWARD, delta * 4);
 		if (detectCollision(TREE, trees.getWorldPositions(), pos))
 		{
@@ -1074,7 +1093,6 @@ public:
 
 	void moveBackwards()
 	{
-		//cam.ProcessKeyboard(BACKWARD, delta * 4);
 		vec3 pos = cam.calculateNextPosition(BACKWARD, delta * 4);
 		if (detectCollision(TREE, trees.positions, pos))
 		{
@@ -1094,7 +1112,6 @@ public:
 
 	void strafeLeft()
 	{
-		//cam.ProcessKeyboard(LEFT, delta * 4);
 		vec3 pos = cam.calculateNextPosition(LEFT, delta * 4);
 		if (detectCollision(TREE, trees.positions, pos))
 		{
@@ -1114,7 +1131,6 @@ public:
 
 	void strafeRight()
 	{
-		//cam.ProcessKeyboard(RIGHT, delta * 4);
 		vec3 pos = cam.calculateNextPosition(RIGHT, delta * 4);
 		if (detectCollision(TREE, trees.positions, pos))
 		{
@@ -1150,6 +1166,9 @@ public:
 		cam.ProcessMouseMovement(xOff, yOff);
 	}
 
+	/**
+		Calculate the distance between player and object using the pythagorian distance equation
+	*/
 	float calcDistance(float pX, float pZ, float oX, float oZ)
 	{
 		float distX = oX - pX;
@@ -1195,6 +1214,9 @@ public:
 		cout << endl;
 	}
 
+	/**
+		Detect collisions using the distance
+	*/
 	bool detectCollision(ObjectType type, std::vector<vec3> objectPositions, vec3 playerPos)
 	{
 		float playerX = playerPos.v[0];
@@ -1377,7 +1399,6 @@ void display()
 
 	//Turns out it runs at 30 fps, even on an 860M - lol
 	//Somehow I can run Battlefield 4 on High/Ultra at 60fps, but can't get above 30 here
-	//Unless it's capped, of course
 	if (frame_count == 60)
 	{
 		player.decreaseHealth();

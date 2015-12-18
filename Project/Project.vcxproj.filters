@@ -48,5 +48,7 @@
   <ItemGroup>
     <Text Include="..\Shaders\simpleFragmentShader.txt" />
     <Text Include="..\Shaders\simpleVertexShader.txt" />
+    <Text Include="..\Shaders\skyboxFragShader.txt" />
+    <Text Include="..\Shaders\skyboxVertexShader.txt" />
   </ItemGroup>
 </Project>
